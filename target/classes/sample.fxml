@@ -1,0 +1,230 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controller">
+    <top>
+        <VBox BorderPane.alignment="CENTER">
+            <children>
+                <MenuBar>
+                    <menus>
+                        <Menu mnemonicParsing="false" text="File">
+                            <items>
+                                <MenuItem mnemonicParsing="false" text="Close" />
+                            </items>
+                        </Menu>
+                        <Menu mnemonicParsing="false" text="Edit">
+                            <items>
+                                <MenuItem mnemonicParsing="false" text="Delete" />
+                            </items>
+                        </Menu>
+                        <Menu mnemonicParsing="false" text="Help">
+                            <items>
+                                <MenuItem mnemonicParsing="false" text="About" />
+                            </items>
+                        </Menu>
+                    </menus>
+                </MenuBar>
+            </children>
+        </VBox>
+    </top>
+    <bottom>
+        <HBox BorderPane.alignment="CENTER">
+            <children>
+                <Label text="Status:">
+                    <padding>
+                        <Insets right="8.0" />
+                    </padding>
+                </Label>
+                <Label fx:id="statusLabel" layoutX="22.0" layoutY="12.0" text="Encryption successful!" />
+            </children>
+            <padding>
+                <Insets bottom="2.0" left="12.0" right="2.0" top="2.0" />
+            </padding>
+        </HBox>
+    </bottom>
+    <center>
+        <VBox BorderPane.alignment="CENTER">
+            <children>
+                <VBox>
+                    <children>
+                        <Label text="1. Select a file">
+                            <font>
+                                <Font name="System Bold" size="12.0" />
+                            </font>
+                        </Label>
+                        <HBox alignment="CENTER_LEFT">
+                            <children>
+                                <Button alignment="CENTER" mnemonicParsing="false" onAction="#browseClicked" text="Browse...">
+                                    <HBox.margin>
+                                        <Insets right="8.0" />
+                                    </HBox.margin>
+                                </Button>
+                                <Label fx:id="selectedFileLabel" alignment="BOTTOM_CENTER" text="No file selected" />
+                            </children>
+                            <VBox.margin>
+                                <Insets top="8.0" />
+                            </VBox.margin>
+                        </HBox>
+                    </children>
+                </VBox>
+                <VBox>
+                    <children>
+                        <Label text="2. Select a mode">
+                            <font>
+                                <Font name="System Bold" size="12.0" />
+                            </font>
+                        </Label>
+                        <HBox alignment="CENTER_LEFT">
+                            <children>
+                                <RadioButton mnemonicParsing="false" onMouseClicked="#onEncryptSelected" selected="true" text="Encrypt">
+                                    <HBox.margin>
+                                        <Insets right="8.0" />
+                                    </HBox.margin>
+                                    <toggleGroup>
+                                        <ToggleGroup fx:id="modeSelectionToggleGroup" />
+                                    </toggleGroup>
+                                </RadioButton>
+                                <RadioButton layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onMouseClicked="#onDecryptSelected" text="Decrypt" toggleGroup="$modeSelectionToggleGroup">
+                           <HBox.margin>
+                              <Insets right="8.0" />
+                           </HBox.margin></RadioButton>
+                        <HBox fx:id="decryptConfigurationHbox" alignment="CENTER_LEFT">
+                           <children>
+                              <Label text="Select configuration file:">
+                                 <font>
+                                    <Font name="System Bold" size="12.0" />
+                                 </font>
+                                 <HBox.margin>
+                                    <Insets right="8.0" />
+                                 </HBox.margin>
+                              </Label>
+                              <Button mnemonicParsing="false" onAction="#browseConfigurationClicked" text="Browse...">
+                                 <HBox.margin>
+                                    <Insets right="8.0" />
+                                 </HBox.margin>
+                              </Button>
+                              <Label fx:id="configurationFileLabel" layoutX="10.0" layoutY="10.0" text="No configuration file selected" />
+                           </children>
+                        </HBox>
+                            </children>
+                            <padding>
+                                <Insets top="8.0" />
+                            </padding>
+                        </HBox>
+                    </children>
+                    <padding>
+                        <Insets top="12.0" />
+                    </padding>
+                </VBox>
+                <VBox>
+                    <children>
+                        <Label text="3. Select an encryption algorithm">
+                            <font>
+                                <Font name="System Bold" size="12.0" />
+                            </font>
+                        </Label>
+                        <HBox>
+                            <children>
+                                <VBox>
+                                    <children>
+                                        <Label text="Cipher" />
+                                        <ChoiceBox fx:id="cipherChoiceBox" prefWidth="150.0" />
+                                    </children>
+                                    <padding>
+                                        <Insets right="8.0" />
+                                    </padding>
+                                </VBox>
+                                <VBox layoutX="38.0" layoutY="10.0">
+                                    <children>
+                                        <Label text="Block mode" />
+                                        <ChoiceBox fx:id="blockModeChoiceBox" prefWidth="150.0" />
+                                    </children>
+                                    <padding>
+                                        <Insets right="8.0" />
+                                    </padding>
+                                </VBox>
+                                <VBox layoutX="138.0" layoutY="10.0">
+                                    <children>
+                                        <Label text="Padding" />
+                                        <ChoiceBox fx:id="paddingModeChoiceBox" prefWidth="150.0" />
+                                    </children>
+                                    <padding>
+                                        <Insets right="8.0" />
+                                    </padding>
+                                </VBox>
+                                <VBox layoutX="326.0" layoutY="18.0">
+                                    <children>
+                                        <Label text="Key length" />
+                                        <ChoiceBox prefWidth="150.0" />
+                                    </children>
+                                    <padding>
+                                        <Insets right="8.0" />
+                                    </padding>
+                                </VBox>
+                            </children>
+                            <padding>
+                                <Insets top="8.0" />
+                            </padding>
+                        </HBox>
+                    </children>
+                    <padding>
+                        <Insets top="12.0" />
+                    </padding>
+                </VBox>
+                <VBox>
+                    <children>
+                        <Label text="4. Start encryption">
+                            <font>
+                                <Font name="System Bold" size="12.0" />
+                            </font>
+                        </Label>
+                        <HBox>
+                            <VBox.margin>
+                                <Insets />
+                            </VBox.margin>
+                            <children>
+                                <Button mnemonicParsing="false" onAction="#encryptClicked" text="Encrypt" />
+                            </children>
+                            <padding>
+                                <Insets top="8.0" />
+                            </padding>
+                        </HBox>
+                    </children>
+                    <padding>
+                        <Insets top="8.0" />
+                    </padding>
+                </VBox>
+                <VBox layoutX="22.0" layoutY="205.0">
+                    <children>
+                        <Label text="5. Output">
+                            <font>
+                                <Font name="System Bold" size="12.0" />
+                            </font>
+                        </Label>
+                        <HBox>
+                            <VBox.margin>
+                                <Insets />
+                            </VBox.margin>
+                            <children>
+                                <Label text="Encrypted file" />
+                            </children>
+                            <padding>
+                                <Insets top="8.0" />
+                            </padding>
+                        </HBox>
+                    </children>
+                    <padding>
+                        <Insets top="8.0" />
+                    </padding>
+                </VBox>
+            </children>
+            <padding>
+                <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
+            </padding>
+        </VBox>
+    </center>
+</BorderPane>
