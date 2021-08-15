@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.MainController">
+    <top>
+        <VBox BorderPane.alignment="CENTER">
+            <children>
+                <MenuBar>
+                    <menus>
+                        <Menu mnemonicParsing="false" text="File">
+                            <items>
+                                <MenuItem mnemonicParsing="false" text="Close" />
+                            </items>
+                        </Menu>
+                        <Menu mnemonicParsing="false" text="Edit">
+                            <items>
+                                <MenuItem mnemonicParsing="false" text="Delete" />
+                            </items>
+                        </Menu>
+                        <Menu mnemonicParsing="false" text="Help">
+                            <items>
+                                <MenuItem mnemonicParsing="false" text="About" />
+                            </items>
+                        </Menu>
+                    </menus>
+                </MenuBar>
+            </children>
+        </VBox>
+    </top>
+<!--    <bottom>-->
+<!--        <HBox BorderPane.alignment="CENTER">-->
+<!--            <children>-->
+<!--                <Label text="Status:">-->
+<!--                    <padding>-->
+<!--                        <Insets right="8.0"/>-->
+<!--                    </padding>-->
+<!--                </Label>-->
+<!--                <Label fx:id="statusLabel" layoutX="22.0" layoutY="12.0" text="Encryption successful!"/>-->
+<!--            </children>-->
+<!--            <padding>-->
+<!--                <Insets bottom="2.0" left="12.0" right="2.0" top="2.0"/>-->
+<!--            </padding>-->
+<!--        </HBox>-->
+<!--    </bottom>-->
+    <center>
+        <VBox BorderPane.alignment="CENTER">
+            <children>
+                <TabPane tabClosingPolicy="UNAVAILABLE">
+                    <tabs>
+                        <Tab text="Symmetric Encryption">
+                            <content>
+                                <fx:include source="symmetric_encryption.fxml" />
+                            </content>
+                        </Tab>
+                        <Tab text="Password based Encryption">
+                            <content>
+                                <fx:include source="password_based_encryption.fxml" />
+                            </content>
+                        </Tab>
+                        <Tab text="Digital Signing">
+                            <content>
+                                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+                            </content>
+                        </Tab>
+                    </tabs>
+                </TabPane>
+            </children>
+        </VBox>
+    </center>
+</BorderPane>

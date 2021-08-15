@@ -5,7 +5,7 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controller">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" >
     <top>
         <VBox BorderPane.alignment="CENTER">
             <children>
@@ -56,7 +56,7 @@
                                 <Font name="System Bold" size="12.0" />
                             </font>
                         </Label>
-                        <HBox>
+                        <HBox alignment="CENTER_LEFT">
                             <children>
                                 <Button alignment="CENTER" mnemonicParsing="false" onAction="#browseClicked" text="Browse...">
                                     <HBox.margin>
@@ -78,7 +78,7 @@
                                 <Font name="System Bold" size="12.0" />
                             </font>
                         </Label>
-                        <HBox>
+                        <HBox alignment="CENTER_LEFT">
                             <children>
                                 <RadioButton mnemonicParsing="false" onMouseClicked="#onEncryptSelected" selected="true" text="Encrypt">
                                     <HBox.margin>
@@ -88,7 +88,28 @@
                                         <ToggleGroup fx:id="modeSelectionToggleGroup" />
                                     </toggleGroup>
                                 </RadioButton>
-                                <RadioButton layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onMouseClicked="#onDecryptSelected" text="Decrypt" toggleGroup="$modeSelectionToggleGroup" />
+                                <RadioButton layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onMouseClicked="#onDecryptSelected" text="Decrypt" toggleGroup="$modeSelectionToggleGroup">
+                           <HBox.margin>
+                              <Insets right="8.0" />
+                           </HBox.margin></RadioButton>
+                        <HBox fx:id="decryptConfigurationHbox" alignment="CENTER_LEFT">
+                           <children>
+                              <Label text="Select configuration file:">
+                                 <font>
+                                    <Font name="System Bold" size="12.0" />
+                                 </font>
+                                 <HBox.margin>
+                                    <Insets right="8.0" />
+                                 </HBox.margin>
+                              </Label>
+                              <Button mnemonicParsing="false" onAction="#browseConfigurationClicked" text="Browse...">
+                                 <HBox.margin>
+                                    <Insets right="8.0" />
+                                 </HBox.margin>
+                              </Button>
+                              <Label fx:id="configurationFileLabel" layoutX="10.0" layoutY="10.0" text="No configuration file selected" />
+                           </children>
+                        </HBox>
                             </children>
                             <padding>
                                 <Insets top="8.0" />
@@ -138,7 +159,7 @@
                                 <VBox layoutX="326.0" layoutY="18.0">
                                     <children>
                                         <Label text="Key length" />
-                                        <ChoiceBox prefWidth="150.0" />
+                                        <ChoiceBox fx:id="keyLengthChoiceBox" prefWidth="150.0" />
                                     </children>
                                     <padding>
                                         <Insets right="8.0" />

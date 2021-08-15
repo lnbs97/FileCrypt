@@ -1,5 +1,7 @@
+package encryption;
+
 public enum PaddingMode {
     NoPadding,
-    PCKS7Padding,
+    PKCS7Padding,
     ZeroBytePadding
 }

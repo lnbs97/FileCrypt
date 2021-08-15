@@ -20,6 +20,7 @@
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
+      <module name="FileCrypt2" target="15" />
       <module name="JavaFxApplication" target="15" />
     </bytecodeTargetLevel>
   </component>
