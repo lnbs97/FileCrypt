@@ -12,9 +12,14 @@ enum Status {
     ENCRYPTION_SUCCESSFUL("Encryption successful!"),
     ENCRYPTION_FAILED("Encryption failed!"),
     DECRYPTION_SUCCESSFUL("Decryption successful!"),
-    DECRYPTION_FAILED("Decryption failed!");
+    DECRYPTION_FAILED("Decryption failed!"),
+    VERIFY_FAILED("Signature verification failed!"),
+    VERIFY_SUCCESSFUL("Signature verification successful!"),
+    SIGNING_SUCCESSFUL("Document Signing successful!"),
+    SIGNING_FAILED("Document Signing failed!"),
+    READY_SIGNING("Ready for Signing / Verification!");
 
-    public final String label;
+    String label;
 
     Status(String label) {
         this.label = label;
