@@ -1,8 +1,8 @@
 package encryption.interfaces;
 
-import encryption.BlockMode;
-import encryption.KeyDerivationFunction;
-import encryption.PaddingMode;
+import encryption.enums.BlockMode;
+import encryption.enums.KeyDerivationFunction;
+import encryption.enums.PaddingMode;
 
 import java.io.File;
 

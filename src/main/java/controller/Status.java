@@ -17,7 +17,13 @@ enum Status {
     VERIFY_SUCCESSFUL("Signature verification successful!"),
     SIGNING_SUCCESSFUL("Document Signing successful!"),
     SIGNING_FAILED("Document Signing failed!"),
-    READY_SIGNING("Ready for Signing / Verification!");
+    READY_SIGNING("Ready for Signing / Verification!"),
+    HASH_SUCCESSFUL("Hash Creation was successful!"),
+    HASH_FAILED("Hash Creation has failed!"),
+    HASH_CHECK_SUCCESS("Hash Check was successful!"),
+    HASH_CHECK_FAILED("Hash Check has failed!"),
+    READY_HASH("Ready for hashing / hash check"),
+    SELECT_HASH_FILE("Please select a hash file!");
 
     String label;
 

@@ -2,6 +2,8 @@ package controller;
 
 import encryption.*;
 
+import encryption.enums.BlockMode;
+import encryption.enums.PaddingMode;
 import encryption.interfaces.SymmetricalEncryptionAlgorithm;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
@@ -50,7 +52,7 @@ public class SymmetricEncryptionController implements Initializable {
     public HBox decryptConfigurationHbox;
     public Button encryptButton;
 
-    private final SymmetricalEncryptionAlgorithm[] algorithms = {new AESSymmetric()};
+    private final SymmetricalEncryptionAlgorithm[] algorithms = {new SymmetricEncryption()};
     private SymmetricalEncryptionAlgorithm selectedAlgorithm;
 
     public void onEncryptSelected() {

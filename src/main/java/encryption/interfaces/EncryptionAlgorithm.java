@@ -1,9 +1,7 @@
 package encryption.interfaces;
 
-import encryption.BlockMode;
-import encryption.PaddingMode;
-
-import java.io.File;
+import encryption.enums.BlockMode;
+import encryption.enums.PaddingMode;
 
 public interface EncryptionAlgorithm {
 

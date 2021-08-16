@@ -1,9 +1,11 @@
 package controller;
 
-import encryption.DigitalSigning;
+import encryption.Hashing;
+import encryption.HashAlgorithm;
 import javafx.event.ActionEvent;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
+import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.HBox;
@@ -13,11 +15,11 @@ import java.io.File;
 import java.net.URL;
 import java.util.ResourceBundle;
 
-public class DigitalSigningController implements Initializable {
+public class HashingController implements Initializable {
 
     enum Mode {
-        SIGN,
-        VERIFY
+        HASH,
+        CHECK_HASH
     }
 
     private File selectedFile;
@@ -30,35 +32,39 @@ public class DigitalSigningController implements Initializable {
     public ToggleGroup modeSelectionToggleGroup;
     public HBox decryptConfigurationHbox;
     public Button encryptButton;
+    public ChoiceBox<HashAlgorithm> cipherChoiceBox;
 
-    private Mode mode = Mode.SIGN;
+    private Mode mode = Mode.HASH;
 
     private boolean isFileSelected = false;
     private boolean isConfigSelected = false;
 
+    private HashAlgorithm selectedAlgorithm;
+    private Hashing hashing = new Hashing();
+
     public void encryptClicked(ActionEvent actionEvent) throws Exception {
         if (updateStatus()) {
             switch (mode) {
-                case VERIFY:
+                case CHECK_HASH:
                     try {
-                        if(DigitalSigning.verify(selectedFile, configurationFile)) {
-                            statusLabel.setText(Status.VERIFY_SUCCESSFUL.label);
+                        if (hashing.check_hash(selectedFile, configurationFile)) {
+                            statusLabel.setText(Status.HASH_CHECK_SUCCESS.label);
                         } else {
-                            statusLabel.setText(Status.VERIFY_FAILED.label);
+                            statusLabel.setText(Status.HASH_CHECK_FAILED.label);
                         }
                     } catch
                     (Exception e) {
-                        statusLabel.setText(Status.VERIFY_FAILED.label);
+                        statusLabel.setText(Status.HASH_CHECK_FAILED.label);
                         throw e;
                     }
                     break;
-                case SIGN:
+                case HASH:
                     try {
-                        File outputFile = new File(selectedFile.getAbsolutePath() + "_sig.json");
-                        DigitalSigning.sign(selectedFile, outputFile);
-                        statusLabel.setText(Status.SIGNING_SUCCESSFUL.label);
+                        File outputFile = new File(selectedFile.getAbsolutePath() + "_hash.json");
+                        hashing.hash(selectedFile, outputFile, selectedAlgorithm);
+                        statusLabel.setText(Status.HASH_SUCCESSFUL.label);
                     } catch (Exception e) {
-                        statusLabel.setText(Status.SIGNING_FAILED.label);
+                        statusLabel.setText(Status.HASH_FAILED.label);
                         throw e;
                     }
                     break;
@@ -97,32 +103,32 @@ public class DigitalSigningController implements Initializable {
     }
 
     public void onSignSelected() {
-        mode = Mode.SIGN;
+        mode = Mode.HASH;
         updateStatus();
         decryptConfigurationHbox.setVisible(false);
-        encryptButton.setText("Sign");
-        encryptLabel.setText("3. Start signing");
+        encryptButton.setText("Hash");
+        encryptLabel.setText("3. Start hashing");
     }
 
     public void onVerifySelected() {
-        mode = Mode.VERIFY;
+        mode = Mode.CHECK_HASH;
         updateStatus();
         decryptConfigurationHbox.setVisible(true);
-        encryptButton.setText("Verify");
-        encryptLabel.setText("3. Start signature verification");
+        encryptButton.setText("Check");
+        encryptLabel.setText("3. Check hash");
     }
 
     private boolean updateStatus() {
         if (isFileSelected) {
-            if (mode == Mode.VERIFY) {
+            if (mode == Mode.CHECK_HASH) {
                 if (isConfigSelected) {
                     statusLabel.setText(Status.READY_SIGNING.label);
                     return true;
                 } else {
-                    statusLabel.setText(Status.SELECT_CONFIG.label);
+                    statusLabel.setText(Status.SELECT_HASH_FILE.label);
                 }
-            } else if (mode == Mode.SIGN) {
-                statusLabel.setText(Status.READY_SIGNING.label);
+            } else if (mode == Mode.HASH) {
+                statusLabel.setText(Status.READY_HASH.label);
                 return true;
             }
         } else {
@@ -134,6 +140,14 @@ public class DigitalSigningController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         updateStatus();
+
+        selectedAlgorithm = HashAlgorithm.values()[0];
         decryptConfigurationHbox.setVisible(false);
+        cipherChoiceBox.getItems().addAll(HashAlgorithm.values());
+        cipherChoiceBox.setValue(HashAlgorithm.values()[0]);
+        cipherChoiceBox.setOnAction(actionEvent -> {
+            selectedAlgorithm = cipherChoiceBox.getValue();
+            updateStatus();
+        });
     }
 }

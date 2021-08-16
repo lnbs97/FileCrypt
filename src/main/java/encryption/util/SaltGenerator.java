@@ -1,4 +1,4 @@
-package encryption;
+package encryption.util;
 
 import java.security.SecureRandom;
 import java.util.Random;

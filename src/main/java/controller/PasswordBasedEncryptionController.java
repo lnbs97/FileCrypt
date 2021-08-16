@@ -2,6 +2,9 @@ package controller;
 
 import encryption.*;
 
+import encryption.enums.BlockMode;
+import encryption.enums.KeyDerivationFunction;
+import encryption.enums.PaddingMode;
 import encryption.interfaces.PasswordBasedEncryptionAlgorithm;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
@@ -16,7 +19,6 @@ import javafx.stage.FileChooser;
 import javax.crypto.AEADBadTagException;
 import java.io.File;
 import java.net.URL;
-import java.nio.file.Files;
 import java.util.ResourceBundle;
 
 
@@ -49,7 +51,7 @@ public class PasswordBasedEncryptionController implements Initializable {
     public HBox decryptConfigurationHbox;
     public PasswordField passwordField;
 
-    private final PasswordBasedEncryptionAlgorithm[] algorithms = {new AESPasswordBasedEncryption()};
+    private final PasswordBasedEncryptionAlgorithm[] algorithms = {new PasswordBasedEncryption()};
     private PasswordBasedEncryptionAlgorithm selectedAlgorithm;
 
 

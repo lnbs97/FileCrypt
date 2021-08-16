@@ -1,5 +1,7 @@
 package encryption;
 
+import encryption.enums.BlockMode;
+import encryption.enums.PaddingMode;
 import encryption.interfaces.SymmetricalEncryptionAlgorithm;
 import org.apache.commons.io.FilenameUtils;
 import org.json.simple.JSONObject;
@@ -16,44 +18,41 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.security.AlgorithmParameterGenerator;
 import java.security.AlgorithmParameters;
-import java.security.SecureRandom;
 import java.util.Base64;
 
-public class AESSymmetric implements SymmetricalEncryptionAlgorithm {
+public class SymmetricEncryption implements SymmetricalEncryptionAlgorithm {
 
-    //TODO richtige Modes einstellen
-    PaddingMode[] supportedPaddingModes = PaddingMode.values();
-    BlockMode[] supportedBlockModes = BlockMode.values();
-    Integer[] supportedKeyLengths = {128, 192, 256};
+    private final PaddingMode[] supportedPaddingModes = PaddingMode.values();
+    private final BlockMode[] supportedBlockModes = BlockMode.values();
+    private final Integer[] supportedKeyLengths = {128, 192, 256};
 
     // Init parameters
-    File selectedFile;
-    File configurationFile;
-    PaddingMode selectedPaddingMode;
-    BlockMode selectedBlockMode;
-    Integer selectedKeyLength;
+    private File selectedFile;
+    private File configurationFile;
+    private PaddingMode selectedPaddingMode;
+    private BlockMode selectedBlockMode;
+    private Integer selectedKeyLength;
 
-    String transformationString;
+    private String transformationString;
 
     private SecretKey key;
     private byte[] iv;
     private FileWriter fileWriter;
 
-    public String convertSecretKeyToString(SecretKey secretKey) {
+    private String convertSecretKeyToString(SecretKey secretKey) {
         return Base64.getEncoder().encodeToString(secretKey.getEncoded());
     }
 
-    public SecretKey convertStringToSecretKey(String key) {
+    private SecretKey convertStringToSecretKey(String key) {
         byte[] decodedKey = Base64.getDecoder().decode(key);
         SecretKey secretKey = new SecretKeySpec(decodedKey, 0, decodedKey.length, "AES");
         return secretKey;
     }
 
-    public void createConfigFile(SecretKey secretKey) {
+    private void createConfigFile(SecretKey secretKey) {
         JSONObject config = new JSONObject();
 
         config.put("algorithm", "AES");
@@ -129,7 +128,7 @@ public class AESSymmetric implements SymmetricalEncryptionAlgorithm {
         if (selectedBlockMode == BlockMode.CBC) {
             this.iv = cipher.getIV();
         } else if (selectedBlockMode == BlockMode.GCM) {
-            AlgorithmParameterGenerator parameterGenerator = AlgorithmParameterGenerator.getInstance("GCM","BC");
+            AlgorithmParameterGenerator parameterGenerator = AlgorithmParameterGenerator.getInstance("GCM", "BC");
             AlgorithmParameters pGCM = parameterGenerator.generateParameters();
             GCMParameterSpec gcmParameterSpec = pGCM.getParameterSpec(GCMParameterSpec.class);
             this.iv = gcmParameterSpec.getIV();
@@ -150,7 +149,7 @@ public class AESSymmetric implements SymmetricalEncryptionAlgorithm {
         Files.write(outputFile.toPath(), outputBytes);
     }
 
-    public String generateTransformationString() {
+    private String generateTransformationString() {
         return "AES" +
                 "/" +
                 selectedBlockMode +
@@ -195,7 +194,7 @@ public class AESSymmetric implements SymmetricalEncryptionAlgorithm {
         transformationString = generateTransformationString();
     }
 
-    public void readConfigFile() {
+    private void readConfigFile() {
         try {
             FileReader fileReader = new FileReader(configurationFile.getAbsolutePath());
             JSONParser jsonParser = new JSONParser();

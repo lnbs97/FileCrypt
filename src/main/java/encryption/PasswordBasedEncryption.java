@@ -1,6 +1,10 @@
 package encryption;
 
+import encryption.enums.BlockMode;
+import encryption.enums.KeyDerivationFunction;
+import encryption.enums.PaddingMode;
 import encryption.interfaces.PasswordBasedEncryptionAlgorithm;
+import encryption.util.SaltGenerator;
 import org.apache.commons.io.FilenameUtils;
 import org.bouncycastle.crypto.PBEParametersGenerator;
 import org.bouncycastle.crypto.generators.SCrypt;
@@ -24,7 +28,7 @@ import java.security.AlgorithmParameters;
 import java.security.GeneralSecurityException;
 import java.util.Base64;
 
-public class AESPasswordBasedEncryption implements PasswordBasedEncryptionAlgorithm {
+public class PasswordBasedEncryption implements PasswordBasedEncryptionAlgorithm {
 
     KeyDerivationFunction[] supportedKdf = {KeyDerivationFunction.SHA256, KeyDerivationFunction.SCRYPT};
     PaddingMode[] supportedPaddingModes = PaddingMode.values();

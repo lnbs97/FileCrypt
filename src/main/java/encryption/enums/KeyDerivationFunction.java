@@ -1,4 +1,4 @@
-package encryption;
+package encryption.enums;
 
 public enum KeyDerivationFunction {
     SCRYPT,
