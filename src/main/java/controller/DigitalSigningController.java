@@ -1,5 +1,6 @@
 package controller;
 
+import controller.enums.Status;
 import encryption.DigitalSigning;
 import javafx.event.ActionEvent;
 import javafx.fxml.Initializable;
@@ -13,6 +14,13 @@ import java.io.File;
 import java.net.URL;
 import java.util.ResourceBundle;
 
+/**
+ * Controller for the digital_signing.fxml layout
+ * Controls UI elements and triggers actions in the {@link DigitalSigning} class
+ *
+ * @author Leo Nobis
+ */
+@SuppressWarnings("ALL")
 public class DigitalSigningController implements Initializable {
 
     enum Mode {
@@ -74,12 +82,11 @@ public class DigitalSigningController implements Initializable {
         if (selectedFile != null) {
             selectedFileLabel.setText(selectedFile.getAbsolutePath());
             isFileSelected = true;
-            updateStatus();
         } else {
             selectedFileLabel.setText("No file selected");
             isFileSelected = false;
-            updateStatus();
         }
+        updateStatus();
     }
 
     public void browseConfigurationClicked(ActionEvent actionEvent) {

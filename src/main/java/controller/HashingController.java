@@ -1,7 +1,8 @@
 package controller;
 
+import controller.enums.Status;
 import encryption.Hashing;
-import encryption.HashAlgorithm;
+import encryption.enums.HashAlgorithm;
 import javafx.event.ActionEvent;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
@@ -15,6 +16,13 @@ import java.io.File;
 import java.net.URL;
 import java.util.ResourceBundle;
 
+/**
+ * Controller for the hashing.fxml layout
+ * Controls UI elements and triggers actions in the {@link Hashing} class
+ *
+ * @author Leo Nobis
+ */
+@SuppressWarnings("ALL")
 public class HashingController implements Initializable {
 
     enum Mode {
@@ -40,14 +48,14 @@ public class HashingController implements Initializable {
     private boolean isConfigSelected = false;
 
     private HashAlgorithm selectedAlgorithm;
-    private Hashing hashing = new Hashing();
+    private final Hashing hashing = new Hashing();
 
     public void encryptClicked(ActionEvent actionEvent) throws Exception {
         if (updateStatus()) {
             switch (mode) {
                 case CHECK_HASH:
                     try {
-                        if (hashing.check_hash(selectedFile, configurationFile)) {
+                        if (hashing.checkHash(selectedFile, configurationFile)) {
                             statusLabel.setText(Status.HASH_CHECK_SUCCESS.label);
                         } else {
                             statusLabel.setText(Status.HASH_CHECK_FAILED.label);
@@ -80,12 +88,11 @@ public class HashingController implements Initializable {
         if (selectedFile != null) {
             selectedFileLabel.setText(selectedFile.getAbsolutePath());
             isFileSelected = true;
-            updateStatus();
         } else {
             selectedFileLabel.setText("No file selected");
             isFileSelected = false;
-            updateStatus();
         }
+        updateStatus();
     }
 
     public void browseConfigurationClicked(ActionEvent actionEvent) {
@@ -107,7 +114,7 @@ public class HashingController implements Initializable {
         updateStatus();
         decryptConfigurationHbox.setVisible(false);
         encryptButton.setText("Hash");
-        encryptLabel.setText("3. Start hashing");
+        encryptLabel.setText("4. Start hashing");
     }
 
     public void onVerifySelected() {
@@ -115,7 +122,7 @@ public class HashingController implements Initializable {
         updateStatus();
         decryptConfigurationHbox.setVisible(true);
         encryptButton.setText("Check");
-        encryptLabel.setText("3. Check hash");
+        encryptLabel.setText("4. Check hash");
     }
 
     private boolean updateStatus() {

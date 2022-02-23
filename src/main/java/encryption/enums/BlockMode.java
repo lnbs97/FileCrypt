@@ -5,5 +5,6 @@ public enum BlockMode {
     CBC,
     OFB,
     CTS,
-    GCM
+    GCM,
+    CCM;
 }

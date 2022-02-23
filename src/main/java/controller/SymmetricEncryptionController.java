@@ -1,10 +1,11 @@
 package controller;
 
+import controller.enums.Status;
 import encryption.*;
 
 import encryption.enums.BlockMode;
 import encryption.enums.PaddingMode;
-import encryption.interfaces.SymmetricalEncryptionAlgorithm;
+import encryption.interfaces.SymmetricalEncryptor;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.Initializable;
@@ -22,7 +23,13 @@ import java.io.File;
 import java.net.URL;
 import java.util.ResourceBundle;
 
-
+/**
+ * Controller for the symmetric_encryption.fxml layout
+ * Controls UI elements and triggers actions in the {@link SymmetricEncryption} class
+ *
+ * @author Leo Nobis
+ */
+@SuppressWarnings("ALL")
 public class SymmetricEncryptionController implements Initializable {
 
     enum Mode {
@@ -30,7 +37,9 @@ public class SymmetricEncryptionController implements Initializable {
         DECRYPT
     }
 
+    // File to be encrypted
     private File selectedFile;
+    // File holding configuration information
     private File configurationFile;
 
     private Mode mode = Mode.ENCRYPT;
@@ -40,11 +49,11 @@ public class SymmetricEncryptionController implements Initializable {
     private boolean isAlgorithmSelected = false;
 
     // UI Elements
-    public Label selectedFileLabel = null;
+    public Label selectedFileLabel;
     public Label configurationFileLabel;
     public Label statusLabel;
     public Label encryptLabel;
-    public ChoiceBox<SymmetricalEncryptionAlgorithm> cipherChoiceBox;
+    public ChoiceBox<SymmetricalEncryptor> cipherChoiceBox;
     public ChoiceBox<PaddingMode> paddingModeChoiceBox;
     public ChoiceBox<BlockMode> blockModeChoiceBox;
     public ChoiceBox<Integer> keyLengthChoiceBox;
@@ -52,8 +61,8 @@ public class SymmetricEncryptionController implements Initializable {
     public HBox decryptConfigurationHbox;
     public Button encryptButton;
 
-    private final SymmetricalEncryptionAlgorithm[] algorithms = {new SymmetricEncryption()};
-    private SymmetricalEncryptionAlgorithm selectedAlgorithm;
+    private final SymmetricalEncryptor[] algorithms = {new SymmetricEncryption()};
+    private SymmetricalEncryptor selectedAlgorithm;
 
     public void onEncryptSelected() {
         mode = Mode.ENCRYPT;
@@ -72,9 +81,6 @@ public class SymmetricEncryptionController implements Initializable {
     }
 
     public void encryptClicked(ActionEvent actionEvent) throws Exception {
-        byte[] outputBytes;
-        File outputFile;
-
         if (updateStatus()) {
             selectedAlgorithm.init(
                     paddingModeChoiceBox.getValue(),

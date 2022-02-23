@@ -6,7 +6,7 @@ import encryption.enums.PaddingMode;
 
 import java.io.File;
 
-public interface PasswordBasedEncryptionAlgorithm extends EncryptionAlgorithm{
+public interface PasswordBasedEncryptor extends Encryptor {
     void init(PaddingMode selectedPaddingMode,
               BlockMode selectedBlockMode,
               KeyDerivationFunction selectedKdf,

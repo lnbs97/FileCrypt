@@ -3,7 +3,7 @@ package encryption;
 import encryption.enums.BlockMode;
 import encryption.enums.KeyDerivationFunction;
 import encryption.enums.PaddingMode;
-import encryption.interfaces.PasswordBasedEncryptionAlgorithm;
+import encryption.interfaces.PasswordBasedEncryptor;
 import encryption.util.SaltGenerator;
 import org.apache.commons.io.FilenameUtils;
 import org.bouncycastle.crypto.PBEParametersGenerator;
@@ -28,27 +28,49 @@ import java.security.AlgorithmParameters;
 import java.security.GeneralSecurityException;
 import java.util.Base64;
 
-public class PasswordBasedEncryption implements PasswordBasedEncryptionAlgorithm {
+/**
+ * Base class for encrypting files with password based encryption algorithms (PBE)
+ * Used by {@link controller.PasswordBasedEncryptionController}
+ *
+ * @author Leo Nobis
+ */
+@SuppressWarnings("SameParameterValue")
+public class PasswordBasedEncryption implements PasswordBasedEncryptor {
 
-    KeyDerivationFunction[] supportedKdf = {KeyDerivationFunction.SHA256, KeyDerivationFunction.SCRYPT};
-    PaddingMode[] supportedPaddingModes = PaddingMode.values();
-    BlockMode[] supportedBlockModes = {BlockMode.GCM, BlockMode.CBC};
-    Integer[] supportedKeyLengths = {256};
+    // Used for GUI choiceBox
+    private final KeyDerivationFunction[] supportedKdf = {KeyDerivationFunction.SHA256, KeyDerivationFunction.SCRYPT};
+    // Used for GUI choiceBox
+    private final PaddingMode[] supportedPaddingModes = PaddingMode.values();
+    // Used for GUI choiceBox
+    private final BlockMode[] supportedBlockModes = {BlockMode.GCM, BlockMode.CBC};
+    // Used for GUI choiceBox
+    private final Integer[] supportedKeyLengths = {256};
 
-    // Init parameters
-    File selectedFile;
-    File configurationFile;
-    PaddingMode selectedPaddingMode;
-    KeyDerivationFunction selectedKdf;
-    BlockMode selectedBlockMode;
-    Integer selectedKeyLength;
+    // File to be encrypted
+    private File selectedFile;
+    // File holding configuration information
+    private File configurationFile;
+    // PaddingMode used for de/encryption
+    private PaddingMode selectedPaddingMode;
+    // KDF used for de/encryption
+    private KeyDerivationFunction selectedKdf;
+    // BlockMode used for de/encryption
+    private BlockMode selectedBlockMode;
+    // KeyLength used for de/encryption
+    private Integer selectedKeyLength;
 
-    String transformationString;
+    // Used to get a cipher instance
+    private String transformationString;
 
+    // Used for encryption
     private String password;
+    // SecretKey generated from the password
     private SecretKey secretKey;
+    // Initialisation Vector used for de/encryption
     private byte[] iv;
+    // Salt used for key generation
     private byte[] salt;
+    // Used to write config files and de/encrypted files
     private FileWriter fileWriter;
 
     /**
@@ -60,8 +82,8 @@ public class PasswordBasedEncryption implements PasswordBasedEncryptionAlgorithm
      * @param iterationCount the iteration count parameter.
      * @return the derived key.
      */
-    public static byte[] jcePKCS5Scheme2(char[] password, byte[] salt,
-                                         int iterationCount)
+    private static byte[] jcePKCS5Scheme2(char[] password, byte[] salt,
+                                          int iterationCount)
             throws GeneralSecurityException {
         SecretKeyFactory fact = SecretKeyFactory.getInstance(
                 "PBKDF2WITHHMACSHA256", "BC");
@@ -81,26 +103,22 @@ public class PasswordBasedEncryption implements PasswordBasedEncryptionAlgorithm
      * @param parallelizationParam the parallelization parameter.
      * @return the derived key.
      */
-    public static byte[] bcSCRYPT(char[] password, byte[] salt,
-                                  int costParameter, int blocksize,
-                                  int parallelizationParam) {
+    private static byte[] bcSCRYPT(char[] password, byte[] salt,
+                                   int costParameter, int blocksize,
+                                   int parallelizationParam) {
         return SCrypt.generate(
                 PBEParametersGenerator.PKCS5PasswordToUTF8Bytes(password),
                 salt, costParameter, blocksize, parallelizationParam,
                 256 / 8);
     }
 
-    public String convertSecretKeyToString(SecretKey secretKey) {
-        return Base64.getEncoder().encodeToString(secretKey.getEncoded());
-    }
-
-    public SecretKey convertStringToSecretKey(String key) {
-        byte[] decodedKey = Base64.getDecoder().decode(key);
-        SecretKey secretKey = new SecretKeySpec(decodedKey, 0, decodedKey.length, "AES");
-        return secretKey;
-    }
-
-    public void createConfigFile(SecretKey secretKey) {
+    /**
+     * Create a configuration json file containing information about the used encryption parameters as well as the key.
+     * This file can later be used for decryption.
+     * Caution: Do not share this file!
+     */
+    @SuppressWarnings("unchecked") //The json-simple library is compiled with an old bytecode version: 46.0
+    private void createConfigFile() {
         JSONObject config = new JSONObject();
 
         config.put("algorithm", "AES");
@@ -108,7 +126,6 @@ public class PasswordBasedEncryption implements PasswordBasedEncryptionAlgorithm
         config.put("blockMode", selectedBlockMode.toString());
         config.put("keyLength", selectedKeyLength.toString());
         config.put("salt", Base64.getEncoder().encodeToString(salt));
-
         if (this.iv != null) {
             config.put("iv", Base64.getEncoder().encodeToString(iv));
         }
@@ -128,6 +145,12 @@ public class PasswordBasedEncryption implements PasswordBasedEncryptionAlgorithm
         }
     }
 
+    /**
+     * Decrypt selected file with configuration
+     * init() method has to be called first
+     *
+     * @throws Exception when file operations go wrong, exceptions are handled in the controller class
+     */
     public void decrypt() throws Exception {
         readConfigFile();
 
@@ -149,13 +172,14 @@ public class PasswordBasedEncryption implements PasswordBasedEncryptionAlgorithm
         Files.write(outputFile.toPath(), outputBytes);
     }
 
-    private SecretKey generateSecretKeySCRYPT() {
-        byte[] key = bcSCRYPT(password.toCharArray(), salt, 65536, 128, 1);
-        return new SecretKeySpec(key, 0, key.length, "AES");
-    }
-
-    @Override
-    public byte[] decrypt(byte[] input) throws Exception {
+    /**
+     * Byte level decryption of a given input using parameters set in the init() function
+     *
+     * @param input byte representation of the input file
+     * @return decrypted file as byte array
+     * @throws Exception when file operations go wrong, exceptions are handled in the controller class
+     */
+    private byte[] decrypt(byte[] input) throws Exception {
         Cipher cipher = Cipher.getInstance(transformationString, "BC");
 
         if (selectedBlockMode == BlockMode.GCM) {
@@ -168,6 +192,11 @@ public class PasswordBasedEncryption implements PasswordBasedEncryptionAlgorithm
         return cipher.doFinal(input);
     }
 
+    /**
+     * Encrypt a given input file with parameters set in the init() function
+     *
+     * @throws Exception when file operations go wrong, exceptions are handled in the controller class
+     */
     public void encrypt() throws Exception {
         byte[] inputBytes = Files.readAllBytes(selectedFile.toPath());
         byte[] outputBytes = encrypt(inputBytes);
@@ -175,14 +204,14 @@ public class PasswordBasedEncryption implements PasswordBasedEncryptionAlgorithm
         Files.write(outputFile.toPath(), outputBytes);
     }
 
-    public SecretKey generateSecretKeySHA256() throws Exception {
-        PBEKeySpec pbeKeySpec = new PBEKeySpec(password.toCharArray(), salt, 1000, 256);
-        SecretKeyFactory secretKeyFactory = SecretKeyFactory.getInstance("PBEWithSHA256And128BitAES-CBC-BC");
-        return secretKeyFactory.generateSecret(pbeKeySpec);
-    }
-
-    @Override
-    public byte[] encrypt(byte[] input) throws Exception {
+    /**
+     * Byte level encryption of a given input using parameters set in the init() function
+     *
+     * @param input byte representation of the input file
+     * @return encrypted file as byte array
+     * @throws Exception when file operations go wrong, exceptions are handled in the controller class
+     */
+    private byte[] encrypt(byte[] input) throws Exception {
         Cipher cipher = Cipher.getInstance(transformationString, "BC");
         salt = SaltGenerator.getNextSalt();
 
@@ -209,15 +238,39 @@ public class PasswordBasedEncryption implements PasswordBasedEncryptionAlgorithm
             this.iv = cipher.getIV();
         }
 
-        createConfigFile(secretKey);
+        createConfigFile();
 
-        byte[] output = cipher.doFinal(input);
-
-        return output;
+        return cipher.doFinal(input);
     }
 
+    /**
+     * Generate a SecretKey for SCRYPT generated with the entered password and a salt value
+     *
+     * @return SecretKey for SCRYPT
+     */
+    private SecretKey generateSecretKeySCRYPT() {
+        byte[] key = bcSCRYPT(password.toCharArray(), salt, 65536, 128, 1);
+        return new SecretKeySpec(key, 0, key.length, "AES");
+    }
 
-    public String generateTransformationString() {
+    /**
+     * Generate a SecretKey for PBEWithSHA256And128BitAES-CBC
+     *
+     * @return SecretKey for PBEWithSHA256And128BitAES-CBC
+     * @throws Exception when file operations go wrong, exceptions are handled in the controller class
+     */
+    private SecretKey generateSecretKeySHA256() throws Exception {
+        PBEKeySpec pbeKeySpec = new PBEKeySpec(password.toCharArray(), salt, 1000, 256);
+        SecretKeyFactory secretKeyFactory = SecretKeyFactory.getInstance("PBEWithSHA256And128BitAES-CBC-BC");
+        return secretKeyFactory.generateSecret(pbeKeySpec);
+    }
+
+    /**
+     * Generate a string that can be used as a parameter for the Cipher.getInstance() method
+     *
+     * @return cipher String
+     */
+    private String generateTransformationString() {
         return "AES" +
                 "/" +
                 selectedBlockMode +
@@ -225,21 +278,41 @@ public class PasswordBasedEncryption implements PasswordBasedEncryptionAlgorithm
                 selectedPaddingMode;
     }
 
+    /**
+     * Getter method for supported block modes
+     *
+     * @return supported block modes
+     */
     @Override
     public BlockMode[] getSupportedBlockModes() {
         return supportedBlockModes;
     }
 
+    /**
+     * Getter method for supported key derivation functions
+     *
+     * @return supported derivation functions
+     */
     @Override
     public KeyDerivationFunction[] getSupportedKdf() {
         return supportedKdf;
     }
 
+    /**
+     * Getter method for supported key lengths
+     *
+     * @return supported key lengths
+     */
     @Override
     public Integer[] getSupportedKeyLengths() {
         return supportedKeyLengths;
     }
 
+    /**
+     * Getter method for supported padding modes
+     *
+     * @return supported padding modes
+     */
     @Override
     public PaddingMode[] getSupportedPaddingModes() {
         return supportedPaddingModes;
@@ -247,13 +320,16 @@ public class PasswordBasedEncryption implements PasswordBasedEncryptionAlgorithm
 
     /**
      * Has to be called before using encrypt and decrypt
+     * Sets the instance variables of the base class which are used by the en/decrypt functions
+     * Also generates the transformationString
      *
-     * @param selectedPaddingMode
-     * @param selectedBlockMode
-     * @param selectedKeyLength
-     * @param selectedFile
-     * @param configurationFile
-     * @param password
+     * @param selectedPaddingMode used for en/decryption
+     * @param selectedBlockMode   used for en/decryption
+     * @param selectedKdf         used for en/decryption
+     * @param selectedKeyLength   used for en/decryption
+     * @param selectedFile        used for en/decryption
+     * @param configurationFile   used for en/decryption
+     * @param password            used for en/decryption
      */
     @Override
     public void init(
@@ -272,10 +348,13 @@ public class PasswordBasedEncryption implements PasswordBasedEncryptionAlgorithm
         this.configurationFile = configurationFile;
         this.password = password;
 
-        transformationString = generateTransformationString();
+        this.transformationString = generateTransformationString();
     }
 
-    public void readConfigFile() {
+    /**
+     * Read de/encryption parameters from the configuration file
+     */
+    private void readConfigFile() {
         try {
             FileReader fileReader = new FileReader(configurationFile.getAbsolutePath());
             JSONParser jsonParser = new JSONParser();
@@ -293,10 +372,13 @@ public class PasswordBasedEncryption implements PasswordBasedEncryptionAlgorithm
         }
     }
 
+    /**
+     * Return a name for the GUI
+     *
+     * @return name for the GUI
+     */
     @Override
     public String toString() {
         return "AESPBE";
     }
-
-
 }

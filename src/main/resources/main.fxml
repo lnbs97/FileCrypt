@@ -5,7 +5,6 @@
 <?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
-<?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.VBox?>
 
@@ -13,27 +12,17 @@
             fx:controller="controller.MainController">
     <top>
         <VBox BorderPane.alignment="CENTER">
-            <children>
-                <MenuBar>
-                    <menus>
-                        <Menu mnemonicParsing="false" text="File">
-                            <items>
-                                <MenuItem mnemonicParsing="false" text="Close"/>
-                            </items>
-                        </Menu>
-                        <Menu mnemonicParsing="false" text="Edit">
-                            <items>
-                                <MenuItem mnemonicParsing="false" text="Delete"/>
-                            </items>
-                        </Menu>
-                        <Menu mnemonicParsing="false" text="Help">
-                            <items>
-                                <MenuItem mnemonicParsing="false" text="About"/>
-                            </items>
-                        </Menu>
-                    </menus>
-                </MenuBar>
-            </children>
+            <MenuBar>
+                <Menu mnemonicParsing="false" text="File">
+                    <MenuItem mnemonicParsing="false" text="Close"/>
+                </Menu>
+                <Menu mnemonicParsing="false" text="Edit">
+                    <MenuItem mnemonicParsing="false" text="Delete"/>
+                </Menu>
+                <Menu mnemonicParsing="false" text="Help">
+                    <MenuItem mnemonicParsing="false" text="About"/>
+                </Menu>
+            </MenuBar>
         </VBox>
     </top>
     <!--    <bottom>-->
@@ -53,32 +42,20 @@
     <!--    </bottom>-->
     <center>
         <VBox BorderPane.alignment="CENTER">
-            <children>
-                <TabPane tabClosingPolicy="UNAVAILABLE">
-                    <tabs>
-                        <Tab text="Symmetric Encryption">
-                            <content>
-                                <fx:include source="symmetric_encryption.fxml"/>
-                            </content>
-                        </Tab>
-                        <Tab text="Password based Encryption">
-                            <content>
-                                <fx:include source="password_based_encryption.fxml"/>
-                            </content>
-                        </Tab>
-                        <Tab text="Digital Signing">
-                            <content>
-                                <fx:include source="digital_signing.fxml"/>
-                            </content>
-                        </Tab>
-                        <Tab text="Hashing">
-                            <content>
-                                <fx:include source="hashing.fxml"/>
-                            </content>
-                        </Tab>
-                    </tabs>
-                </TabPane>
-            </children>
+            <TabPane tabClosingPolicy="UNAVAILABLE">
+                <Tab text="Symmetric Encryption">
+                    <fx:include source="symmetric_encryption.fxml"/>
+                </Tab>
+                <Tab text="Password based Encryption">
+                    <fx:include source="password_based_encryption.fxml"/>
+                </Tab>
+                <Tab text="Digital Signing">
+                    <fx:include source="digital_signing.fxml"/>
+                </Tab>
+                <Tab text="Hashing">
+                    <fx:include source="hashing.fxml"/>
+                </Tab>
+            </TabPane>
         </VBox>
     </center>
 </BorderPane>

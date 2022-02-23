@@ -1,6 +1,6 @@
-package controller;
+package controller.enums;
 
-enum Status {
+public enum Status {
     SELECT_FILE("Please select a file!"),
     SELECT_CONFIG("Please select a configuration file!"),
     SELECT_ALGORITHM("Please select an algorithm!"),
@@ -23,9 +23,11 @@ enum Status {
     HASH_CHECK_SUCCESS("Hash Check was successful!"),
     HASH_CHECK_FAILED("Hash Check has failed!"),
     READY_HASH("Ready for hashing / hash check"),
-    SELECT_HASH_FILE("Please select a hash file!");
+    SELECT_HASH_FILE("Please select a hash file!"),
+    ENTER_PASSWORD("Please enter a password!"),
+    INVALID_PARAMETER_GCM("GCM can only be used with AEAD modes.");
 
-    String label;
+    public final String label;
 
     Status(String label) {
         this.label = label;
